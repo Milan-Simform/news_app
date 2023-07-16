@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:news_app/modules/home_page/home_page.dart';
 
 class AppRouter {
   factory AppRouter() => instance;
@@ -17,9 +18,7 @@ class AppRouter {
             routes: [
               AppRoute(
                 path: 'home',
-                builder: (s) => const Center(
-                  child: Text('HomePage'),
-                ),
+                builder: (s) => const HomePage(),
                 useFade: true,
               ),
               AppRoute(

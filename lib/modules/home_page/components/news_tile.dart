@@ -28,10 +28,12 @@ class NewsTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
                 color: Colors.white.withAlpha(200),
               ),
+              clipBehavior: Clip.hardEdge,
               child: Image.network(
                 article.media!,
                 width: 200,
                 height: 200,
+                fit: BoxFit.cover,
               ),
             ),
             Expanded(
@@ -44,19 +46,19 @@ class NewsTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          flex: 2,
                           child: Text(
-                            article.author!,
+                            article.topic!.upperCaseFirstLatter(),
                             style: Theme.of(context).textTheme.titleSmall,
                             overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
                           ),
                         ),
                         Expanded(
-                          flex: 2,
                           child: Text(
                             article.publishedDate.dayAgo,
                             style: Theme.of(context).textTheme.titleSmall,
                             overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
                           ),
                         ),
                       ],
@@ -70,8 +72,9 @@ class NewsTile extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          article.topic!,
+                          article.author!,
                           style: Theme.of(context).textTheme.titleSmall,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/utils/extensions.dart';
+import 'package:news_app/values/strings.dart';
 
 class NACategoryMenu extends StatefulWidget {
   const NACategoryMenu({
@@ -26,10 +28,18 @@ class _NACategoryMenuState extends State<NACategoryMenu> {
   @override
   void initState() {
     currentIndex = widget.currentIndex;
+    _scrollController = ScrollController();
     super.initState();
   }
 
   late int currentIndex;
+  late ScrollController _scrollController;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +49,7 @@ class _NACategoryMenuState extends State<NACategoryMenu> {
         padding: widget.padding,
         scrollDirection: Axis.horizontal,
         itemCount: widget.categories.length,
+        controller: _scrollController,
         separatorBuilder: (_, __) => const SizedBox(
           width: 8,
         ),
@@ -52,26 +63,37 @@ class _NACategoryMenuState extends State<NACategoryMenu> {
           ),
           child: Material(
             color: Colors.transparent,
-            child: InkWell(
-              onTap: () => setState(() {
-                currentIndex = index;
-                widget.onTap?.call(index);
-              }),
-              borderRadius: BorderRadius.circular(40),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    widget.categories[index],
-                    style: currentIndex == index
-                        ? Theme.of(context)
-                            .textTheme
-                            .labelLarge!
-                            .copyWith(color: Colors.white.withAlpha(240))
-                        : Theme.of(context).textTheme.labelLarge,
+            child: Builder(
+              builder: (context) {
+                return InkWell(
+                  onTap: () {
+                    Scrollable.ensureVisible(
+                      context,
+                      alignment: 0.5,
+                      duration: 500.ms,
+                    );
+                    setState(() {
+                      currentIndex = index;
+                      widget.onTap?.call(index);
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(40),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        widget.categories[index],
+                        style: currentIndex == index
+                            ? Theme.of(context)
+                                .textTheme
+                                .labelLarge!
+                                .copyWith(color: Colors.white.withAlpha(240))
+                            : Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ),

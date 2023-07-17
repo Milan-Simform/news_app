@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 extension DurationExtensions on int {
   Duration get microseconds => Duration(microseconds: this);
 
@@ -33,5 +35,11 @@ extension DateTimeExtension on DateTime? {
       return '${currentDate.difference(this!).inDays} Days Ago';
     }
     return '';
+  }
+}
+
+extension StringExtension on String {
+  String upperCaseFirstLatter() {
+    return '${this[0].toUpperCase()}${substring(1)}';
   }
 }

@@ -6,13 +6,14 @@ import 'package:news_app/apibase/retry_interceptor.dart';
 import 'package:news_app/apibase/server_error.dart';
 import 'package:news_app/flavors/flavor_values.dart';
 import 'package:news_app/models/model.dart';
+import 'package:news_app/models/response/api_response.dart';
 
 class Repository {
   factory Repository() => instance;
 
   Repository._initialize() {
     dio = Dio(BaseOptions(baseUrl: FlavorValues.instance.baseUrl));
-    dio.interceptors.addAll([HeaderInterceptor(),RetryInterceptor()]);
+    dio.interceptors.addAll([HeaderInterceptor(), RetryInterceptor()]);
     apiService = ApiService(dio);
   }
 
@@ -22,46 +23,32 @@ class Repository {
 
   late ApiService apiService;
 
-  Future<BaseModel<List<Article>>> getLatestArticles() async {
-    try {
-      final response = await apiService.getLatestArticles();
-      return BaseModel(data: response.data);
-    } on DioException catch (e) {
-      return BaseModel(error: ServerError.withError(error: e));
-    }
-    // return fetchData<List<Article>, ApiResponse<List<Article>>>(
-    //   apiService.getArticles(),
-    // );
-  }
+  Future<BaseModel<List<Article>>> getLatestArticles() =>
+      fetchData<List<Article>>(apiService.getLatestArticles());
 
   Future<BaseModel<List<Article>>> getTopicWiseArticles({
     required String topic,
     required int page,
     int? pageSize,
-  }) async {
-    try {
-      final response = await apiService.getTopicWiseArticles(
-        topic: topic,
-        page: page,
-        pageSize: pageSize,
+  }) =>
+      fetchData<List<Article>>(
+        apiService.getTopicWiseArticles(
+          topic: topic,
+          page: page,
+          pageSize: pageSize,
+        ),
       );
-      return BaseModel(data: response.data);
-    } on DioException catch (e) {
-      return BaseModel(error: ServerError.withError(error: e));
-    }
-  }
 }
 
-// Future<BaseModel<T>> fetchData<T, S>(Future<S> function) async {
-//   try {
-//     final response = await function;
-//     if (response is ApiResponse<T>) {
-//       return BaseModel(data: response.data);
-//     }
-//     return BaseModel(data: response);
-//   } on DioException catch (error,stackTrace) {
-//     debugPrintStack(stackTrace: stackTrace);
-//     debugPrint(error.toString());
-//     return BaseModel(error: ServerError.withError(error: error));
-//   }
-// }
+Future<BaseModel<T>> fetchData<T>(Future<dynamic> future) async {
+  try {
+    final result = await future;
+    if (result is ApiResponse<T>) {
+      return BaseModel<T>(data: result.data);
+    } else {
+      return BaseModel<T>(data: result as T?);
+    }
+  } on DioException catch (e) {
+    return BaseModel<T>(error: ServerError.withError(error: e));
+  }
+}

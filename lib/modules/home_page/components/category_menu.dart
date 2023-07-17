@@ -8,12 +8,15 @@ class NACategoryMenu extends StatefulWidget {
     this.padding,
     this.selectedMenuColor,
     this.unselectedMenuColor,
+    this.onTap,
   });
+
   final List<String> categories;
   final EdgeInsetsGeometry? padding;
   final Color? selectedMenuColor;
   final Color? unselectedMenuColor;
   final int currentIndex;
+  final ValueChanged<int>? onTap;
 
   @override
   State<NACategoryMenu> createState() => _NACategoryMenuState();
@@ -27,6 +30,7 @@ class _NACategoryMenuState extends State<NACategoryMenu> {
   }
 
   late int currentIndex;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -51,6 +55,7 @@ class _NACategoryMenuState extends State<NACategoryMenu> {
             child: InkWell(
               onTap: () => setState(() {
                 currentIndex = index;
+                widget.onTap?.call(index);
               }),
               borderRadius: BorderRadius.circular(40),
               child: Center(

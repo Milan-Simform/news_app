@@ -32,8 +32,8 @@ class AppRouter {
               builder: (context) {
                 return Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Milan'),
                       ElevatedButton(
                         onPressed: () => context.go('/home'),
                         child: const Text('HomePage'),

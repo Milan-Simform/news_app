@@ -11,6 +11,7 @@ void main() {
 
 class FlavoredApp extends StatelessWidget {
   const FlavoredApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return FlavorConfig(

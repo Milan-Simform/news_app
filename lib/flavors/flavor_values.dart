@@ -1,9 +1,9 @@
 class FlavorValues {
-
   factory FlavorValues({required String baseUrl}) {
     _instance ??= FlavorValues._internal(baseUrl);
     return _instance!;
   }
+
   FlavorValues._internal(this.baseUrl);
 
   final String baseUrl;

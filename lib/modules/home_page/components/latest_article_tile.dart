@@ -14,20 +14,13 @@ class LatestArticleTile extends StatelessWidget {
       child: Material(
         elevation: 2,
         shadowColor: Colors.grey.shade100,
-        // color: Colors.transparent,
         borderRadius: BorderRadius.circular(15),
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            Container(
+            SizedBox(
               width: 270,
               height: 270,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                // color: Colors.red.shade300,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              // color: Colors.red,
               child: Column(
                 children: [
                   Expanded(
@@ -35,6 +28,7 @@ class LatestArticleTile extends StatelessWidget {
                     child: Image.network(
                       article.media!,
                       fit: BoxFit.cover,
+                      width: 270,
                     ),
                   ),
                   Expanded(

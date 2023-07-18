@@ -12,7 +12,8 @@ abstract class ApiService {
   /// latest_headlines
   @GET('latest_headlines')
   Future<ApiResponse<List<Article>>> getLatestArticles({
-    @Query('page_size') int pageSize = 5,
+    @Query('page') required int page,
+    @Query('page_size') required int pageSize,
   });
 
   /// get articles based on topics

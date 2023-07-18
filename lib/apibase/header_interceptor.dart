@@ -25,7 +25,7 @@ class HeaderInterceptor extends Interceptor {
     // options.headers.putIfAbsent('x-api-key', () => 'an0j-hhE_CDg3yt5LoxRm2HJ1HeB_QeiuUhPkeK5Jb8');
     options.headers.putIfAbsent(
       'x-api-key',
-      () => 'urO4iSJs1kyBAh2iSudsR8W-0vGmfmR4cul-iZ-u5V8',
+      () => 'e16s66UmWixwHuqe54m8DWy1aXji86kSbqCf_ntLswk',
     );
 
     _logger.printSuccessLog(
@@ -36,14 +36,14 @@ class HeaderInterceptor extends Interceptor {
       token: options.headers['x-api-key'].toString(),
     );
     // } else {
-    //   // TODO(username): Show no internet dialog or toast here.
+    // TODO(username): Show no internet dialog or toast here.
     // }
     handler.next(options);
   }
 
   @override
   void onResponse(
-    Response response,
+    Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
     if (response.statusCode == 401) {

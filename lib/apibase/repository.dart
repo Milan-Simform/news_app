@@ -23,8 +23,13 @@ class Repository {
 
   late ApiService apiService;
 
-  Future<BaseModel<List<Article>>> getLatestArticles() =>
-      fetchData<List<Article>>(apiService.getLatestArticles());
+  Future<BaseModel<List<Article>>> getLatestArticles({
+    required int page,
+    required int pageSize,
+  }) =>
+      fetchData<List<Article>>(
+        apiService.getLatestArticles(page: page, pageSize: pageSize),
+      );
 
   Future<BaseModel<List<Article>>> getTopicWiseArticles({
     required String topic,
@@ -44,7 +49,7 @@ Future<BaseModel<T>> fetchData<T>(Future<dynamic> future) async {
   try {
     final result = await future;
     if (result is ApiResponse<T>) {
-      return BaseModel<T>(data: result.data);
+      return BaseModel<T>(data: result.data, maxPages: result.totalPages);
     } else {
       return BaseModel<T>(data: result as T?);
     }

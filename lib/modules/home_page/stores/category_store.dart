@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:news_app/apibase/repository.dart';
 import 'package:news_app/models/response/article/article.dart';
@@ -10,10 +11,25 @@ class CategoryStore extends _CategoryStore with _$CategoryStore {}
 
 abstract class _CategoryStore with Store {
   _CategoryStore() {
-    getTopicWiseArticles(AppStrings.categoryList[currentIndex]);
+    // getTopicWiseArticles(AppStrings.categoryList[currentIndex]);
+    scrollController.addListener(() {
+      final maxScroll = scrollController.position.maxScrollExtent;
+      final currentScroll = scrollController.position.pixels;
+      if (maxScroll - currentScroll <= 40) {
+        getTopicWiseArticles(
+          AppStrings.categoryList[currentIndex],
+          isPagination: true,
+        );
+      }
+    });
   }
 
+  final ScrollController scrollController = ScrollController();
   final Repository repository = Repository();
+  final int pageSize = 20;
+  bool _isFunctionRunning = false;
+  @observable
+  int maxPages = 0;
 
   @observable
   int currentIndex = 0;
@@ -24,24 +40,49 @@ abstract class _CategoryStore with Store {
   @observable
   String errorMsg = '';
 
+  @computed
+  bool get hasData => articleList.length ~/ pageSize != maxPages;
+
+  @observable
   ObservableList<Article> articleList = ObservableList();
 
-  Future<void> getTopicWiseArticles(String topic) async {
-    state = StoreState.loading;
-    errorMsg = '';
-    final res = await repository.getTopicWiseArticles(
-      page: 1,
-      topic: topic.toLowerCase(),
-    );
-    if (res.data != null) {
-      articleList..clear()
-      ..addAll(res.data!);
-      state = StoreState.success;
-    } else {
-      if (res.error != null) {
-        errorMsg = res.error!.getErrorMessage();
+  void dispose() {
+    scrollController.dispose();
+  }
+
+  Future<void> getTopicWiseArticles(
+    String topic, {
+    bool isPagination = false,
+  }) async {
+    if (!_isFunctionRunning) {
+      _isFunctionRunning = true;
+      final page = articleList.length ~/ pageSize + 1;
+      if (page == 1 || !isPagination) {
+        state = StoreState.loading;
+        errorMsg = '';
       }
-      state = StoreState.error;
+      final res = await repository.getTopicWiseArticles(
+        page: page,
+        topic: topic.toLowerCase(),
+      );
+      if (res.data != null) {
+        if (!isPagination) {
+          articleList = ObservableList.of(res.data!);
+        } else {
+          articleList.addAll(res.data!);
+        }
+        if (state == StoreState.loading) {
+          state = StoreState.success;
+        }
+      } else {
+        if (res.error != null) {
+          errorMsg = res.error!.getErrorMessage();
+        }
+        if (state == StoreState.loading) {
+          state = StoreState.error;
+        }
+      }
+      _isFunctionRunning = false;
     }
   }
 }

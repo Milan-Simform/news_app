@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_app/modules/home_page/home_page.dart';
+import 'package:news_app/modules/home_page/home_page_nested.dart';
 
 class AppRouter {
   factory AppRouter() => instance;
+
   AppRouter._internal();
+
   static final AppRouter instance = AppRouter._internal();
+
   // static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   // static final _shellNavigatorKey = GlobalKey<NavigatorState>();
   final router = GoRouter(
@@ -23,9 +27,7 @@ class AppRouter {
               ),
               AppRoute(
                 path: 'home1',
-                builder: (s) => const Center(
-                  child: Text('HomePage'),
-                ),
+                builder: (s) => const HomePageNested(),
               ),
             ],
             builder: (s) => Builder(

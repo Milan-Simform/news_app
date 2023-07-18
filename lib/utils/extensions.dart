@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 extension DurationExtensions on int {
   Duration get microseconds => Duration(microseconds: this);
@@ -42,4 +42,10 @@ extension StringExtension on String {
   String upperCaseFirstLatter() {
     return '${this[0].toUpperCase()}${substring(1)}';
   }
+}
+
+extension ScreenSize on BuildContext {
+  double get screenHeight => MediaQuery.of(this).size.height;
+
+  double get screenWidth => MediaQuery.of(this).size.width;
 }

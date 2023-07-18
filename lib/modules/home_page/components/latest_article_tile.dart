@@ -4,7 +4,9 @@ import 'package:news_app/utils/extensions.dart';
 
 class LatestArticleTile extends StatelessWidget {
   const LatestArticleTile({required this.article, super.key});
+
   final Article article;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -13,7 +15,8 @@ class LatestArticleTile extends StatelessWidget {
         elevation: 2,
         shadowColor: Colors.grey.shade100,
         // color: Colors.transparent,
-        borderRadius: BorderRadius.circular(15), clipBehavior: Clip.hardEdge,
+        borderRadius: BorderRadius.circular(15),
+        clipBehavior: Clip.hardEdge,
         child: Stack(
           children: [
             Container(
@@ -43,6 +46,7 @@ class LatestArticleTile extends StatelessWidget {
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,6 +60,8 @@ class LatestArticleTile extends StatelessWidget {
                                       .copyWith(
                                         color: Colors.grey.shade500,
                                       ),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.left,
                                 ),
                               ),
                               Expanded(

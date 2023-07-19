@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:news_app/modules/home_page/components/category_menu/category_menu.dart';
-import 'package:news_app/modules/home_page/components/latest_article_tile.dart';
+import 'package:news_app/modules/home_page/components/category_wise_news_scroll_view.dart';
 import 'package:news_app/modules/home_page/components/latest_news_scrollview.dart';
-import 'package:news_app/modules/home_page/components/news_tile.dart';
+import 'package:news_app/modules/home_page/components/searched_news_list.dart';
 import 'package:news_app/modules/home_page_old/home_store.dart';
 import 'package:news_app/values/constants.dart';
-import 'package:news_app/values/enumeration.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,14 +15,15 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Provider(
       create: (_) => HomeStore(),
+      dispose: (_, store) => store.dispose(),
       builder: (context, _) {
         final homeStore = context.read<HomeStore>();
         return Scaffold(
-          body: NestedScrollView(
+          body: CustomScrollView(
             controller:
                 homeStore.categoryWiseNewsPaginationStore.scrollController,
             scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            slivers: [
               SliverPersistentHeader(
                 pinned: true,
                 delegate: AppBarWithSearchDelegate(
@@ -50,11 +50,20 @@ class HomePage extends StatelessWidget {
                             vertical: 12,
                           ),
                           child: TextField(
+                            controller: homeStore.searchController,
                             textInputAction: TextInputAction.search,
                             decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.clear),
+                              suffixIcon: Observer(
+                                builder: (_) {
+                                  return Visibility(
+                                    visible: homeStore.isSearchOn,
+                                    child: IconButton(
+                                      onPressed:
+                                          homeStore.searchController.clear,
+                                      icon: const Icon(Icons.clear),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -64,84 +73,61 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.defaultPadding,
-                      ),
-                      child: Text(
-                        'Latest News',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                    const SizedBox(height: 280, child: LatestNewsScrollView()),
-                  ],
+              Observer(
+                builder: (context) => SliverVisibility(
+                  visible: homeStore.isSearchOn,
+                  sliver: const SearchedNewsList(),
                 ),
               ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: CategoryMenuDelegate(
-                  child: NACategoryMenu(
-                    categories: homeStore.categoryList,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.defaultPadding,
+              Observer(
+                builder: (context) => SliverVisibility(
+                  visible: !homeStore.isSearchOn,
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppConstants.defaultPadding,
+                          ),
+                          child: Text(
+                            'Latest News',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ),
+                        const SizedBox(
+                            height: 280, child: LatestNewsScrollView()),
+                      ],
                     ),
                   ),
                 ),
               ),
+              Observer(
+                builder: (_) => SliverVisibility(
+                  visible: !homeStore.isSearchOn,
+                  sliver: SliverPersistentHeader(
+                    pinned: true,
+                    delegate: CategoryMenuDelegate(
+                      child: NACategoryMenu(
+                        categories: homeStore.categoryList,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppConstants.defaultPadding,
+                        ),
+                        onTap: (index) => homeStore.currentIndex = index,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Observer(
+                builder: (_) => SliverVisibility(
+                  visible: !homeStore.isSearchOn,
+                  sliver: const SliverToBoxAdapter(
+                    child: CategoryWiseNewsScrollView(),
+                  ),
+                ),
+              ),
             ],
-            body: Observer(
-              builder: (context) {
-                final categoryNewsStore =
-                    homeStore.categoryWiseNewsPaginationStore;
-                switch (categoryNewsStore.state) {
-                  case StoreState.initial:
-                    return const SizedBox();
-                  case StoreState.loading:
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  case StoreState.error:
-                    return Center(
-                      child: Text(
-                        categoryNewsStore.errorMsg,
-                        textAlign: TextAlign.center,
-                      ),
-                    );
-                  case StoreState.success:
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.defaultPadding,
-                      ),
-                      // primary: true,
-                      itemCount: categoryNewsStore.itemList.length + 1,
-                      separatorBuilder: (_, __) => const SizedBox(
-                        height: 12,
-                      ),
-                      itemBuilder: (_, index) {
-                        if (index == categoryNewsStore.itemList.length &&
-                            categoryNewsStore.hasMoreData) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (index == categoryNewsStore.itemList.length &&
-                            !categoryNewsStore.hasMoreData) {
-                          return const SizedBox();
-                        }
-                        return NewsTile(
-                          article: categoryNewsStore.itemList[index],
-                        );
-                      },
-                    );
-                }
-              },
-            ),
           ),
         );
       },
@@ -160,7 +146,7 @@ class AppBarWithSearchDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return child;
+    return ColoredBox(color: Colors.white, child: child);
   }
 
   @override
@@ -187,7 +173,6 @@ class CategoryMenuDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      alignment: Alignment.topCenter,
       padding: const EdgeInsets.symmetric(vertical: 12),
       color: Colors.white,
       child: child,

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
-import 'package:flutter/material.dart';
 
 class ServerError implements Exception {
   ServerError.withError({required DioException error}) {

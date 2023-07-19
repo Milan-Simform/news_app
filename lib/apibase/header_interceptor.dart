@@ -25,7 +25,7 @@ class HeaderInterceptor extends Interceptor {
     // options.headers.putIfAbsent('x-api-key', () => 'an0j-hhE_CDg3yt5LoxRm2HJ1HeB_QeiuUhPkeK5Jb8');
     options.headers.putIfAbsent(
       'x-api-key',
-      () => 'Ai0IyiXKQnTiD_-xR3AXN8ExE-wzgK53Y82Yvmgr0tU',
+      () => 'ibuQ-W6b5dLkuUkH7_0j3QXeCk5phPop2amc5NbQVp4',
     );
 
     _logger.printSuccessLog(

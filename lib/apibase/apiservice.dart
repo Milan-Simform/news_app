@@ -29,7 +29,6 @@ abstract class ApiService {
   @GET('search')
   Future<ApiResponse<List<Article>>> getSearchedArticles({
     @Query('q') required String query,
-    @Query('topic') required String topic,
     @Query('page') required int page,
     @Query('page_size') int? pageSize = 10,
     @Query('ranked_only') bool rankedOnly = true,

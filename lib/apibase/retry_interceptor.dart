@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:news_app/apibase/dio_connectivity_request_retrier.dart';

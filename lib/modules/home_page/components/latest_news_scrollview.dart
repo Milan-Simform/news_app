@@ -15,7 +15,6 @@ class LatestNewsScrollView extends StatelessWidget {
     return Observer(
       builder: (_) {
         final latestNewsStore = homeStore.latestNewsPaginationStore;
-
         switch (latestNewsStore.state) {
           case StoreState.initial:
             return const SizedBox();
@@ -66,7 +65,7 @@ class LatestNewsScrollView extends StatelessWidget {
                   ],
                 ),
               );
-            } else {
+            }
               return ListView.separated(
                 controller: latestNewsStore.scrollController,
                 padding: const EdgeInsets.symmetric(
@@ -92,7 +91,6 @@ class LatestNewsScrollView extends StatelessWidget {
                 ),
                 itemCount: latestNewsStore.itemList.length + 1,
               );
-            }
 
           case StoreState.success:
             return ListView.separated(

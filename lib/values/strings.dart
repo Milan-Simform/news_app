@@ -4,10 +4,8 @@ class AppStrings {
     'Economics',
     'Entertainment',
     'Finance',
-    'Health',
     'Politics',
     'Science',
-    'Sports',
     'Tech',
   ];
 

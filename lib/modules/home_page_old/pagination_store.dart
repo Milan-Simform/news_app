@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:news_app/apibase/base_model.dart';
-import 'package:news_app/utils/extensions.dart';
 import 'package:news_app/values/enumeration.dart';
 part 'pagination_store.g.dart';
 
@@ -29,10 +28,11 @@ abstract class _PaginationStore<T> with Store {
 
   final int pageSize;
 
-  int? _maxPages;
+  @observable
+  int? maxPages;
 
   @computed
-  bool get hasMoreData => _maxPages != null && currentPage < _maxPages!;
+  bool get hasMoreData => maxPages != null && currentPage <= maxPages!;
 
   void addListener(
     double offset,
@@ -41,7 +41,10 @@ abstract class _PaginationStore<T> with Store {
     scrollController.addListener(() {
       final maxScroll = scrollController.position.maxScrollExtent;
       final currentScroll = scrollController.position.pixels;
+      print('____________________$maxScroll ____$currentScroll');
       if (state != StoreState.error && maxScroll - currentScroll <= offset) {
+      print('________________innnnnnnnnnnnnnnnnnnnnnnneirni____$maxScroll ____$currentScroll');
+
         fetchItems(fetchData);
       }
     });
@@ -51,26 +54,57 @@ abstract class _PaginationStore<T> with Store {
     Future<BaseModel<List<T>>> Function(int, int) fetchData,
   ) async {
     if (!isLoading) {
+      isLoading = true;
       state = StoreState.loading;
       errorMsg = '';
-      isLoading = true;
       final res = await fetchData(currentPage, pageSize);
-      if (res.data != null) {
-        itemList.addAll(res.data!);
-        currentPage++;
-        _maxPages = res.maxPages;
-        state = StoreState.success;
-      } else {
-        errorMsg = res.error!.getErrorMessage();
-        state = StoreState.error;
+      if (res.maxPages != null) {
+        
+        maxPages = res.maxPages;
+        if (maxPages == 0) {
+          state = StoreState.success;
+          return;
+        }
       }
+      _setListData(res);
       isLoading = false;
     }
   }
 
+  void _setListData(BaseModel<List<T>> res) {
+    if (res.data != null) {
+      print('________________________________item: ${itemList.length}');
+
+      itemList.addAll(res.data!);
+      print(''''''
+          ''''''
+          ''''''
+          ''''''
+          ''''''
+          ''''''
+          '''zzzzzzzzzzzzz'''
+          ''''''
+          ''''''
+          ''''''
+          ''''''
+          ''''''
+          '''''');
+      print('________________________________item: ${itemList.length}');
+
+      currentPage++;
+      state = StoreState.success;
+    } else {
+      errorMsg = res.error!.getErrorMessage();
+      state = StoreState.error;
+    }
+  }
+
   void reset() {
-    currentPage = 1;
+    print('________________________________item: ${itemList.length}');
     itemList.clear();
+    state = StoreState.initial;
+    currentPage = 1;
+    maxPages = null;
     isLoading = false;
   }
 

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 import 'package:news_app/apibase/base_model.dart';
 import 'package:news_app/apibase/repository.dart';
@@ -34,9 +32,9 @@ abstract class _HomeStore with Store {
   PaginationStore<Article> searchedNewsPaginationStore =
       PaginationStore<Article>(pageSize: 20);
 
-  final searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
-  final debouncer = Debouncer(500.ms);
+  final debouncer = Debouncer(1500.ms);
 
   // this index is for Catagory Menu
   @observable
@@ -46,34 +44,39 @@ abstract class _HomeStore with Store {
   List<String> categoryList = AppStrings.categoryList;
 
   // if this bool is true then show searchedNewsList else show other two lis on screen
-  @computed
-  bool get isSearchOn => searchController.text.trim().isNotEmpty;
+  @observable
+  bool isSearchOn = false;
 
   @computed
   List<Article> get latestNewsList => latestNewsPaginationStore.itemList;
   @computed
   List<Article> get categoryWiseNewsList =>
       categoryWiseNewsPaginationStore.itemList;
+
   @computed
   List<Article> get searchedNewsList => searchedNewsPaginationStore.itemList;
 
   void onInit() {
     latestNewsPaginationStore.fetchItems(fetchLatestNews);
     categoryWiseNewsPaginationStore.fetchItems(fetchCategoryWiseNews);
-    disposers.add(
-      reaction((_) => currentIndex, (_) {
-        print('currentIndex______________');
-        categoryWiseNewsPaginationStore.reset();
-      }),
-    );
+    final reactionDisposer = reaction((_) => currentIndex, (_) {
+      categoryWiseNewsPaginationStore
+        ..reset()
+        ..fetchItems(fetchCategoryWiseNews);
+    });
+    disposers.add(reactionDisposer);
     latestNewsPaginationStore.addListener(40, fetchLatestNews);
     categoryWiseNewsPaginationStore.addListener(40, fetchCategoryWiseNews);
     searchedNewsPaginationStore.addListener(40, fetchSearchedNews);
     searchController.addListener(() {
-      fetchSearchedNews(
-        searchedNewsPaginationStore.currentPage,
-        searchedNewsPaginationStore.pageSize,
-      );
+      print('_____________________search add listener running________');
+      print('_____________________search add listener running________');
+      print('_____________________search add listener running________');
+      print('_____________________search add listener running________');
+      print('_____________________search add listener running________');
+      searchedNewsPaginationStore
+        ..reset()
+        ..fetchItems(fetchSearchedNews);
     });
   }
 
@@ -105,17 +108,19 @@ abstract class _HomeStore with Store {
     final completer = Completer<BaseModel<List<Article>>>();
     debouncer.call(() {
       if (searchController.text.trim().isNotEmpty) {
+        isSearchOn = true;
+        print(
+            '____________________Search call ${searchedNewsPaginationStore.maxPages}');
         completer.complete(
           repository.getSearchedArticles(
             query: searchController.text.trim().toLowerCase(),
             page: page,
             pageSize: pageSize,
-            topic: categoryList[currentIndex].toLowerCase(),
           ),
         );
       } else {
-        searchedNewsPaginationStore.reset();
-        completer.complete(BaseModel());
+        completer.complete(BaseModel(data: []));
+        isSearchOn = false;
       }
     });
     return completer.future;

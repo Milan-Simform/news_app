@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:news_app/apibase/base_model.dart';
+import 'package:news_app/utils/extensions.dart';
 import 'package:news_app/values/enumeration.dart';
 part 'pagination_store.g.dart';
 
@@ -39,7 +41,7 @@ abstract class _PaginationStore<T> with Store {
     scrollController.addListener(() {
       final maxScroll = scrollController.position.maxScrollExtent;
       final currentScroll = scrollController.position.pixels;
-      if (maxScroll - currentScroll <= offset) {
+      if (state != StoreState.error && maxScroll - currentScroll <= offset) {
         fetchItems(fetchData);
       }
     });
@@ -48,21 +50,16 @@ abstract class _PaginationStore<T> with Store {
   Future<void> fetchItems(
     Future<BaseModel<List<T>>> Function(int, int) fetchData,
   ) async {
-
-    print('fetch is running.......................');
     if (!isLoading) {
-      if (currentPage == 1) {
-        state = StoreState.loading;
-      }
+      state = StoreState.loading;
+      errorMsg = '';
       isLoading = true;
       final res = await fetchData(currentPage, pageSize);
       if (res.data != null) {
         itemList.addAll(res.data!);
         currentPage++;
         _maxPages = res.maxPages;
-        if (state == StoreState.loading) {
-          state = StoreState.success;
-        }
+        state = StoreState.success;
       } else {
         errorMsg = res.error!.getErrorMessage();
         state = StoreState.error;

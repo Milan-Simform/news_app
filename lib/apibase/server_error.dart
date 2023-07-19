@@ -25,9 +25,7 @@ class ServerError implements Exception {
       case DioExceptionType.connectionError:
         _errorMessage = 'Connection error';
       case DioExceptionType.unknown:
-        debugPrint('_______ERROR-MSG_______${error.message}');
-        debugPrint('_______ERROR-MSG_______ ${error.error}');
-        if (error.type is SocketException) {
+        if (error.error is SocketException) {
           _errorMessage = 'Connection failed due to internet connection';
         } else {
           _errorMessage = error.error.toString();

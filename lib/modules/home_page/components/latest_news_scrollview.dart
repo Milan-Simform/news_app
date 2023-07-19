@@ -15,6 +15,7 @@ class LatestNewsScrollView extends StatelessWidget {
     return Observer(
       builder: (_) {
         final latestNewsStore = homeStore.latestNewsPaginationStore;
+
         switch (latestNewsStore.state) {
           case StoreState.initial:
             return const SizedBox();
@@ -25,7 +26,7 @@ class LatestNewsScrollView extends StatelessWidget {
               );
             }
             return ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
+              controller: latestNewsStore.scrollController,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.defaultPadding,
               ),
@@ -58,10 +59,8 @@ class LatestNewsScrollView extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     ElevatedButton(
-                      onPressed: () => homeStore.fetchLatestNews(
-                        homeStore.latestNewsPaginationStore.currentPage,
-                        homeStore.latestNewsPaginationStore.pageSize,
-                      ),
+                      onPressed: () =>
+                          latestNewsStore.fetchItems(homeStore.fetchLatestNews),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -69,7 +68,7 @@ class LatestNewsScrollView extends StatelessWidget {
               );
             } else {
               return ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
+                controller: latestNewsStore.scrollController,
                 padding: const EdgeInsets.symmetric(
                   horizontal: AppConstants.defaultPadding,
                 ),
@@ -77,13 +76,13 @@ class LatestNewsScrollView extends StatelessWidget {
                 itemBuilder: (context, index) {
                   if (index == latestNewsStore.itemList.length) {
                     return Center(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('Retry'),
+                      child: IconButton(
+                        onPressed: () => latestNewsStore
+                            .fetchItems(homeStore.fetchLatestNews),
+                        icon: const Icon(Icons.refresh),
                       ),
                     );
                   }
-
                   return LatestArticleTile(
                     article: latestNewsStore.itemList[index],
                   );
@@ -97,7 +96,7 @@ class LatestNewsScrollView extends StatelessWidget {
 
           case StoreState.success:
             return ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
+              controller: latestNewsStore.scrollController,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.defaultPadding,
               ),

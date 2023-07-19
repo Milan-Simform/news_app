@@ -24,11 +24,11 @@ class RetryInterceptor extends Interceptor {
       );
     }
     // If Socket Exception
-    else if (err.error != null && err.error is SocketException) {
-      handler.resolve(
-        await requestRetrier.scheduleRetryRequest(err.requestOptions),
-      );
-    }
+    // else if (err.error != null && err.error is SocketException) {
+    //   handler.resolve(
+    //     await requestRetrier.scheduleRetryRequest(err.requestOptions),
+    //   );
+    // }
     // InvalidAPIKey or Monthly API calls limit reached: 50
     else if (err.response?.statusCode == 401) {
       handler.next(err);

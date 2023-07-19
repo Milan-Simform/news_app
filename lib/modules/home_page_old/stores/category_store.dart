@@ -54,9 +54,9 @@ abstract class _CategoryStore with Store {
   }
 
   Future<void> getTopicWiseArticles(
-      String topic, {
-        bool isPagination = false,
-      }) async {
+    String topic, {
+    bool isPagination = false,
+  }) async {
     if (!_isFunctionRunning) {
       _isFunctionRunning = true;
       final page = articleList.length ~/ pageSize + 1;

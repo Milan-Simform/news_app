@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
-import 'package:news_app/modules/home_page/components/category_menu/category_menu.dart';
-import 'package:news_app/modules/home_page/components/latest_article_tile.dart';
-import 'package:news_app/modules/home_page/components/news_tile.dart';
-import 'package:news_app/modules/home_page/stores/category_store.dart';
-import 'package:news_app/modules/home_page/stores/latest_article_store.dart';
-import 'package:news_app/utils/extensions.dart';
+import 'package:news_app/modules/home_page_old/components/category_menu/category_menu.dart';
+import 'package:news_app/modules/home_page_old/components/latest_article_tile.dart';
+import 'package:news_app/modules/home_page_old/components/news_tile.dart';
+import 'package:news_app/modules/home_page_old/stores/category_store.dart';
+import 'package:news_app/modules/home_page_old/stores/latest_article_store.dart';
 import 'package:news_app/values/constants.dart';
 import 'package:news_app/values/enumeration.dart';
 import 'package:news_app/values/strings.dart';
 import 'package:provider/provider.dart';
 
-class HomePageNested extends StatefulWidget {
-  const HomePageNested({super.key});
-
-  @override
-  State<HomePageNested> createState() => _HomePageNestedState();
-}
-
-class _HomePageNestedState extends State<HomePageNested> {
-  final scrollController = ScrollController();
+class HomePageCustom extends StatelessWidget {
+  const HomePageCustom({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,61 +26,15 @@ class _HomePageNestedState extends State<HomePageNested> {
           dispose: (_, store) => store.dispose(),
         ),
       ],
-      builder: (context, _) {
+      builder: (context, child) {
         final latestArticleStore = context.read<LatestArticleStore>();
         final categoryStore = context.read<CategoryStore>();
-        autorun((p0) {});
-        // reaction(_) {
-        //   final offset = categoryStore.scrollController.offset;
-        //   scrollController.animateTo(offset,
-        //       duration: 300.ms, curve: Curves.easeIn);
-        // }
-
-        reaction(
-              (_) => categoryStore.scrollController.offset,
-              (offset) {
-            print(
-                'Offset:__________________________________________________$offset');
-            scrollController.animateTo(offset,
-                duration: 300.ms, curve: Curves.easeIn);
-          },
-        );
-
         return Scaffold(
-          // appBar: AppBar(),
-          body: NestedScrollView(
-            controller: scrollController,
-            physics: const NeverScrollableScrollPhysics(),
-            headerSliverBuilder:
-                (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                // SliverAppBar(
-                //     pinned: true,
-                //     scrolledUnderElevation: 0,
-                //     automaticallyImplyLeading: false,
-                //     title: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: [
-                //         Padding(
-                //           padding: const EdgeInsets.symmetric(
-                //             horizontal: AppConstants.defaultPadding,
-                //           ),
-                //           child: Text(
-                //             'Discover',
-                //             style: Theme.of(context).textTheme.headlineMedium,
-                //           ),
-                //         ),
-                //         Padding(
-                //           padding: const EdgeInsets.symmetric(
-                //             horizontal: AppConstants.defaultPadding,
-                //           ),
-                //           child: Text(
-                //             'News from all over the world.',
-                //             style: Theme.of(context).textTheme.titleLarge,
-                //           ),
-                //         ),
-                //       ],
-                //     )),
+          body: CustomScrollView(
+              controller: categoryStore.scrollController,
+              scrollBehavior:
+                  const ScrollBehavior().copyWith(overscroll: false),
+              slivers: [
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: SearchDelegate(
@@ -140,27 +85,6 @@ class _HomePageNestedState extends State<HomePageNested> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // const SizedBox(
-                      //   height: kToolbarHeight,
-                      // ),
-
-                      // SearchBar
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(
-                      //     horizontal: AppConstants.defaultPadding,
-                      //     vertical: 12,
-                      //   ),
-                      //   child: TextField(
-                      //     textInputAction: TextInputAction.search,
-                      //     decoration: InputDecoration(
-                      //       suffixIcon: IconButton(
-                      //         onPressed: () {},
-                      //         icon: const Icon(Icons.clear),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-
                       // Latest News. Put 5-10 articles with Horizontal ListView.
                       Padding(
                         padding: const EdgeInsets.symmetric(
@@ -192,38 +116,37 @@ class _HomePageNestedState extends State<HomePageNested> {
                                 );
                               case StoreState.success:
                                 return ListView.separated(
-                                  controller:
-                                  latestArticleStore.scrollController,
+                                  physics: const NeverScrollableScrollPhysics(),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: AppConstants.defaultPadding,
                                   ),
                                   scrollDirection: Axis.horizontal,
                                   itemBuilder: (context, index) {
                                     if (index ==
-                                        latestArticleStore
-                                            .articleList.length &&
+                                            latestArticleStore
+                                                .articleList.length &&
                                         latestArticleStore.hasData) {
                                       return const Center(
                                         child: CircularProgressIndicator(),
                                       );
                                     }
                                     if (index ==
-                                        latestArticleStore
-                                            .articleList.length &&
+                                            latestArticleStore
+                                                .articleList.length &&
                                         !latestArticleStore.hasData) {
                                       return const SizedBox();
                                     }
                                     return LatestArticleTile(
                                       article:
-                                      latestArticleStore.articleList[index],
+                                          latestArticleStore.articleList[index],
                                     );
                                   },
                                   separatorBuilder: (context, index) =>
-                                  const SizedBox(
+                                      const SizedBox(
                                     width: 8,
                                   ),
                                   itemCount:
-                                  latestArticleStore.articleList.length + 1,
+                                      latestArticleStore.articleList.length + 1,
                                 );
                             }
                           },
@@ -244,57 +167,56 @@ class _HomePageNestedState extends State<HomePageNested> {
                     ),
                   ),
                 ),
-              ];
-            },
-            body: Flexible(
-              child: Observer(
-                builder: (context) {
-                  switch (categoryStore.state) {
-                    case StoreState.initial:
-                      return const SizedBox();
-                    case StoreState.loading:
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    case StoreState.error:
-                      return Center(
-                        child: Text(
-                          categoryStore.errorMsg,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    case StoreState.success:
-                      return ListView.separated(
-                        // physics: NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppConstants.defaultPadding,
-                        ),
-                        itemCount: categoryStore.articleList.length + 1,
-                        controller: categoryStore.scrollController,
-                        separatorBuilder: (_, __) => const SizedBox(
-                          height: 12,
-                        ),
-                        itemBuilder: (_, index) {
-                          if (index == categoryStore.articleList.length &&
-                              categoryStore.hasData) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (index == categoryStore.articleList.length &&
-                              !categoryStore.hasData) {
-                            return const SizedBox();
-                          }
-                          return NewsTile(
-                            article: categoryStore.articleList[index],
+                SliverToBoxAdapter(
+                  child: Observer(
+                    builder: (context) {
+                      switch (categoryStore.state) {
+                        case StoreState.initial:
+                          return const SizedBox();
+                        case StoreState.loading:
+                          return const Center(
+                            child: CircularProgressIndicator(),
                           );
-                        },
-                      );
-                  }
-                },
-              ),
-            ),
-          ),
+                        case StoreState.error:
+                          return Center(
+                            child: Text(
+                              categoryStore.errorMsg,
+                              textAlign: TextAlign.center,
+                            ),
+                          );
+                        case StoreState.success:
+                          return ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppConstants.defaultPadding,
+                            ),
+                            // primary: true,
+                            itemCount: categoryStore.articleList.length + 1,
+                            separatorBuilder: (_, __) => const SizedBox(
+                              height: 12,
+                            ),
+                            itemBuilder: (_, index) {
+                              if (index == categoryStore.articleList.length &&
+                                  categoryStore.hasData) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (index == categoryStore.articleList.length &&
+                                  !categoryStore.hasData) {
+                                return const SizedBox();
+                              }
+                              return NewsTile(
+                                article: categoryStore.articleList[index],
+                              );
+                            },
+                          );
+                      }
+                    },
+                  ),
+                )
+              ]),
         );
       },
     );
@@ -308,10 +230,10 @@ class SearchDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context,
-      double shrinkOffset,
-      bool overlapsContent,
-      ) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       alignment: Alignment.topCenter,
       // padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
@@ -340,10 +262,10 @@ class FollowSpaceDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context,
-      double shrinkOffset,
-      bool overlapsContent,
-      ) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       alignment: Alignment.topCenter,
       padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),

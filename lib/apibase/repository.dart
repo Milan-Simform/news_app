@@ -43,6 +43,20 @@ class Repository {
           pageSize: pageSize,
         ),
       );
+  Future<BaseModel<List<Article>>> getSearchedArticles({
+    required String query,
+    required String topic,
+    required int page,
+    int? pageSize,
+  }) =>
+      fetchData<List<Article>>(
+        apiService.getSearchedArticles(
+          query: query,
+          topic: topic,
+          page: page,
+          pageSize: pageSize,
+        ),
+      );
 }
 
 Future<BaseModel<T>> fetchData<T>(Future<dynamic> future) async {

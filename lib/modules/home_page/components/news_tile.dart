@@ -43,6 +43,7 @@ class NewsTile extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,7 +53,6 @@ class NewsTile extends StatelessWidget {
                             article.topic!.upperCaseFirstLatter(),
                             style: Theme.of(context).textTheme.titleSmall,
                             overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.left,
                           ),
                         ),
                         Expanded(
@@ -71,14 +71,11 @@ class NewsTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          article.author!,
-                          style: Theme.of(context).textTheme.titleSmall,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                    Text(
+                      article.author!,
+                      style: Theme.of(context).textTheme.titleSmall,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ],
                 ),

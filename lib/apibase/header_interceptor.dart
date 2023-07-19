@@ -13,9 +13,9 @@ class HeaderInterceptor extends Interceptor {
 
   @override
   Future<void> onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+      RequestOptions options,
+      RequestInterceptorHandler handler,
+      ) async {
     // final internet = await NetworkUtils().checkIsInternet();
     // if (internet) {
     //   final token = await checkToken();
@@ -25,7 +25,7 @@ class HeaderInterceptor extends Interceptor {
     // options.headers.putIfAbsent('x-api-key', () => 'an0j-hhE_CDg3yt5LoxRm2HJ1HeB_QeiuUhPkeK5Jb8');
     options.headers.putIfAbsent(
       'x-api-key',
-      () => 'e16s66UmWixwHuqe54m8DWy1aXji86kSbqCf_ntLswk',
+          () => 'YOZgbXDEqabDl5nkH3l2VnALJpNEk9TcGksMFOUQnfA',
     );
 
     _logger.printSuccessLog(
@@ -43,9 +43,9 @@ class HeaderInterceptor extends Interceptor {
 
   @override
   void onResponse(
-    Response<dynamic> response,
-    ResponseInterceptorHandler handler,
-  ) {
+      Response<dynamic> response,
+      ResponseInterceptorHandler handler,
+      ) {
     if (response.statusCode == 401) {
       // TODO(username): Handle token expired
     }
@@ -63,15 +63,15 @@ class HeaderInterceptor extends Interceptor {
 
   @override
   void onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) {
+      DioException err,
+      ErrorInterceptorHandler handler,
+      ) {
     if (err.response != null) {
       _logger.printErrorLog(
         responseBody: err.response!.data.toString(),
         parameters: err.response!.requestOptions.data as Object?,
         url:
-            '${err.response!.realUri.scheme}://${err.response!.realUri.authority}'
+        '${err.response!.realUri.scheme}://${err.response!.realUri.authority}'
             '${err.response!.realUri.path}',
         token: err.response!.headers.value('Authentication') ?? '',
         errorString: err.response!.statusMessage ?? 'No message found',

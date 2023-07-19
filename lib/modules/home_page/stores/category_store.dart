@@ -11,11 +11,14 @@ class CategoryStore extends _CategoryStore with _$CategoryStore {}
 
 abstract class _CategoryStore with Store {
   _CategoryStore() {
-    // getTopicWiseArticles(AppStrings.categoryList[currentIndex]);
+    getTopicWiseArticles(AppStrings.categoryList[currentIndex]);
     scrollController.addListener(() {
       final maxScroll = scrollController.position.maxScrollExtent;
       final currentScroll = scrollController.position.pixels;
+      print('__________$maxScroll _________$currentScroll _________');
+
       if (maxScroll - currentScroll <= 40) {
+        print('____________________________');
         getTopicWiseArticles(
           AppStrings.categoryList[currentIndex],
           isPagination: true,
@@ -23,8 +26,8 @@ abstract class _CategoryStore with Store {
       }
     });
   }
-
-  final ScrollController scrollController = ScrollController();
+  @observable
+  ScrollController scrollController = ScrollController();
   final Repository repository = Repository();
   final int pageSize = 20;
   bool _isFunctionRunning = false;
@@ -51,9 +54,9 @@ abstract class _CategoryStore with Store {
   }
 
   Future<void> getTopicWiseArticles(
-    String topic, {
-    bool isPagination = false,
-  }) async {
+      String topic, {
+        bool isPagination = false,
+      }) async {
     if (!_isFunctionRunning) {
       _isFunctionRunning = true;
       final page = articleList.length ~/ pageSize + 1;

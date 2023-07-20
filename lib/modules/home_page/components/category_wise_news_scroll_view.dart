@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:news_app/modules/home_page/components/news_tile.dart';
-import 'package:news_app/modules/home_page_old/home_store.dart';
+import 'package:news_app/modules/home_page/home_store.dart';
 import 'package:news_app/values/constants.dart';
 import 'package:news_app/values/enumeration.dart';
 import 'package:provider/provider.dart';
@@ -90,6 +90,12 @@ class CategoryWiseNewsScrollView extends StatelessWidget {
             );
 
           case StoreState.success:
+            if (categoryNewsStore.itemList.isEmpty &&
+                categoryNewsStore.maxPages == 0) {
+              return const Center(
+                child: Text('No Data'),
+              );
+            }
             return ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

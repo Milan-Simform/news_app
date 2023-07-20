@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/model.dart';
+import 'package:news_app/modules/home_page/components/na_network_image.dart';
 import 'package:news_app/utils/extensions.dart';
 
 class NewsTile extends StatelessWidget {
@@ -31,11 +32,11 @@ class NewsTile extends StatelessWidget {
                 color: Colors.white.withAlpha(200),
               ),
               clipBehavior: Clip.hardEdge,
-              child: Image.network(
-                article.media!,
+              child: NaNetworkImage(
+                url: article.media!,
+                fit: BoxFit.cover,
                 width: 200,
                 height: 200,
-                fit: BoxFit.cover,
               ),
             ),
             Expanded(

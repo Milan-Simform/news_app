@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:news_app/modules/home_page_old/components/category_menu/category_menu_store.dart';
+import 'package:news_app/modules/home_page/components/category_menu/category_menu_store.dart';
 import 'package:provider/provider.dart';
 
 class NACategoryMenu extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/model.dart';
+import 'package:news_app/modules/home_page/components/na_network_image.dart';
 import 'package:news_app/utils/extensions.dart';
 
 class LatestArticleTile extends StatelessWidget {
@@ -25,10 +26,10 @@ class LatestArticleTile extends StatelessWidget {
                 children: [
                   Expanded(
                     flex: 9,
-                    child: Image.network(
-                      article.media!,
-                      fit: BoxFit.cover,
+                    child: NaNetworkImage(
+                      url: article.media!,
                       width: 270,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Expanded(
@@ -52,8 +53,8 @@ class LatestArticleTile extends StatelessWidget {
                                       .textTheme
                                       .titleSmall!
                                       .copyWith(
-                                    color: Colors.grey.shade500,
-                                  ),
+                                        color: Colors.grey.shade500,
+                                      ),
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.left,
                                 ),
@@ -98,8 +99,8 @@ class LatestArticleTile extends StatelessWidget {
                 child: Text(
                   article.topic!.upperCaseFirstLatter(),
                   style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                    color: Theme.of(context).secondaryHeaderColor,
-                  ),
+                        color: Theme.of(context).secondaryHeaderColor,
+                      ),
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.left,
                 ),

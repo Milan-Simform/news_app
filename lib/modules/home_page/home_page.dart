@@ -4,7 +4,7 @@ import 'package:news_app/modules/home_page/components/category_menu/category_men
 import 'package:news_app/modules/home_page/components/category_wise_news_scroll_view.dart';
 import 'package:news_app/modules/home_page/components/latest_news_scrollview.dart';
 import 'package:news_app/modules/home_page/components/searched_news_list.dart';
-import 'package:news_app/modules/home_page_old/home_store.dart';
+import 'package:news_app/modules/home_page/home_store.dart';
 import 'package:news_app/values/constants.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +52,9 @@ class HomePage extends StatelessWidget {
                           child: TextField(
                             controller: homeStore.searchController,
                             textInputAction: TextInputAction.search,
+
                             decoration: InputDecoration(
+                              hintText: 'Search News...',
                               suffixIcon: Observer(
                                 builder: (_) {
                                   return Visibility(
@@ -96,7 +98,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(
-                            height: 280, child: LatestNewsScrollView()),
+                            height: 280, child: LatestNewsScrollView(),),
                       ],
                     ),
                   ),

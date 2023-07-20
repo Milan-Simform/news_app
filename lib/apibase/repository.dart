@@ -57,14 +57,10 @@ class Repository {
       );
 }
 
-Future<BaseModel<T>> fetchData<T>(Future<dynamic> future) async {
+Future<BaseModel<T>> fetchData<T>(Future<ApiResponse<T>> future) async {
   try {
     final result = await future;
-    if (result is ApiResponse<T>) {
-      return BaseModel<T>(data: result.data, maxPages: result.totalPages);
-    } else {
-      return BaseModel<T>(data: result as T?);
-    }
+    return BaseModel<T>(data: result.data, maxPages: result.totalPages);
   } on DioException catch (e) {
     return BaseModel<T>(error: ServerError.withError(error: e));
   }

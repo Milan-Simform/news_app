@@ -41,15 +41,14 @@ abstract class _PaginationStore<T> with Store {
     scrollController.addListener(() {
       final maxScroll = scrollController.position.maxScrollExtent;
       final currentScroll = scrollController.position.pixels;
-      print('____________________$maxScroll ____$currentScroll');
-      if (state != StoreState.error && maxScroll - currentScroll <= offset) {
-      print('________________innnnnnnnnnnnnnnnnnnnnnnneirni____$maxScroll ____$currentScroll');
 
+      if (state != StoreState.error && maxScroll - currentScroll <= offset) {
         fetchItems(fetchData);
       }
     });
   }
 
+  @action
   Future<void> fetchItems(
     Future<BaseModel<List<T>>> Function(int, int) fetchData,
   ) async {
@@ -59,7 +58,6 @@ abstract class _PaginationStore<T> with Store {
       errorMsg = '';
       final res = await fetchData(currentPage, pageSize);
       if (res.maxPages != null) {
-        
         maxPages = res.maxPages;
         if (maxPages == 0) {
           state = StoreState.success;
@@ -73,24 +71,7 @@ abstract class _PaginationStore<T> with Store {
 
   void _setListData(BaseModel<List<T>> res) {
     if (res.data != null) {
-      print('________________________________item: ${itemList.length}');
-
       itemList.addAll(res.data!);
-      print(''''''
-          ''''''
-          ''''''
-          ''''''
-          ''''''
-          ''''''
-          '''zzzzzzzzzzzzz'''
-          ''''''
-          ''''''
-          ''''''
-          ''''''
-          ''''''
-          '''''');
-      print('________________________________item: ${itemList.length}');
-
       currentPage++;
       state = StoreState.success;
     } else {
@@ -100,7 +81,6 @@ abstract class _PaginationStore<T> with Store {
   }
 
   void reset() {
-    print('________________________________item: ${itemList.length}');
     itemList.clear();
     state = StoreState.initial;
     currentPage = 1;

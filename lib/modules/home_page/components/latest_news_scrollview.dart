@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:news_app/modules/home_page/components/latest_article_tile.dart';
-import 'package:news_app/modules/home_page_old/home_store.dart';
+import 'package:news_app/modules/home_page/home_store.dart';
 import 'package:news_app/values/constants.dart';
 import 'package:news_app/values/enumeration.dart';
 import 'package:provider/provider.dart';
@@ -66,33 +66,39 @@ class LatestNewsScrollView extends StatelessWidget {
                 ),
               );
             }
-              return ListView.separated(
-                controller: latestNewsStore.scrollController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.defaultPadding,
-                ),
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  if (index == latestNewsStore.itemList.length) {
-                    return Center(
-                      child: IconButton(
-                        onPressed: () => latestNewsStore
-                            .fetchItems(homeStore.fetchLatestNews),
-                        icon: const Icon(Icons.refresh),
-                      ),
-                    );
-                  }
-                  return LatestArticleTile(
-                    article: latestNewsStore.itemList[index],
+            return ListView.separated(
+              controller: latestNewsStore.scrollController,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.defaultPadding,
+              ),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                if (index == latestNewsStore.itemList.length) {
+                  return Center(
+                    child: IconButton(
+                      onPressed: () =>
+                          latestNewsStore.fetchItems(homeStore.fetchLatestNews),
+                      icon: const Icon(Icons.refresh),
+                    ),
                   );
-                },
-                separatorBuilder: (context, index) => const SizedBox(
-                  width: 8,
-                ),
-                itemCount: latestNewsStore.itemList.length + 1,
-              );
+                }
+                return LatestArticleTile(
+                  article: latestNewsStore.itemList[index],
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                width: 8,
+              ),
+              itemCount: latestNewsStore.itemList.length + 1,
+            );
 
           case StoreState.success:
+            if (latestNewsStore.itemList.isEmpty &&
+                latestNewsStore.maxPages == 0) {
+              return const Center(
+                child: Text('No Data'),
+              );
+            }
             return ListView.separated(
               controller: latestNewsStore.scrollController,
               padding: const EdgeInsets.symmetric(
